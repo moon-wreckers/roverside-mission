@@ -26,9 +26,11 @@ def mynode():
     # simultaneously.
     rospy.init_node('mynode', anonymous=True)
 
-    # you code here...
+    rate = rospy.Rate(10)
+    while not rospy.is_shutdown():
+        # you code here...
 
-    rospy.spin()
+    #rospy.spin() # use spin only in pure event handling node
 
 
 if __name__ == '__main__':
