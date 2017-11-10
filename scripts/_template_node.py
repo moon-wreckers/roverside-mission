@@ -30,7 +30,9 @@ def mynode():
     while not rospy.is_shutdown():
         # you code here...
 
-    #rospy.spin() # use spin only in pure event handling node
+        rate.sleep()
+
+    #rospy.spin() # use spin only in pure event handling programming model
 
 
 if __name__ == '__main__':
