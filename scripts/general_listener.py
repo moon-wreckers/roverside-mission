@@ -17,7 +17,9 @@ from sensor_msgs.msg import Imu, JointState
 from geometry_msgs.msg import Vector3Stamped, Twist
 from nav_msgs.msg import Odometry
 
-log_control = ['ak1_imu_data', 'ak2_imu_data']
+log_control = ['ak1_jointstates', 'ak2_jointstates',
+               'ak1_wheelodom',   'ak2_wheelodom',
+               'ak1_ekfodom',     'ak2_ekfodom']
 
 ak1_imu_data = Imu()
 ak2_imu_data = Imu()
@@ -29,6 +31,12 @@ ak1_imu_temperature = Float32()
 ak2_imu_temperature = Float32()
 ak1_diagnostics_battery = Float32()
 ak2_diagnostics_battery = Float32()
+ak1_jointstates = JointState()
+ak2_jointstates = JointState()
+ak1_wheelodom = Odometry()
+ak2_wheelodom = Odometry()
+ak1_ekfodom = Odometry()
+ak2_ekfodom = Odometry()
 
 
 def cb_ak1_imu_data(data):
@@ -81,6 +89,36 @@ def cb_ak2_diagnostics_battery(data):
     ak2_diagnostics_battery = data
 
 
+def cb_ak1_jointstates(data):
+    global ak1_jointstates
+    ak1_jointstates = data
+
+
+def cb_ak2_jointstates(data):
+    global ak2_jointstates
+    ak2_jointstates = data
+
+
+def cb_ak1_wheelodom(data):
+    global ak1_wheelodom
+    ak1_wheelodom = data
+
+
+def cb_ak2_wheelodom(data):
+    global ak2_wheelodom
+    ak2_wheelodom = data
+
+
+def cb_ak1_ekfodom(data):
+    global ak1_ekfodom
+    ak1_ekfodom = data
+
+
+def cb_ak2_ekfodom(data):
+    global ak2_ekfodom
+    ak2_ekfodom = data
+
+
 def listener():
     rospy.init_node('listener', anonymous=True)
 
@@ -94,6 +132,12 @@ def listener():
     rospy.Subscriber("/ak2/imu/temperature", Float32, cb_ak2_imu_temperature)
     rospy.Subscriber("/ak1/diagnostics/battery_voltage", Float32, cb_ak1_diagnostics_battery)
     rospy.Subscriber("/ak2/diagnostics/battery_voltage", Float32, cb_ak2_diagnostics_battery)
+    rospy.Subscriber("/ak1/joint_states", JointState, cb_ak1_jointstates)
+    rospy.Subscriber("/ak2/joint_states", JointState, cb_ak2_jointstates)
+    rospy.Subscriber("/ak1/odom", Odometry, cb_ak1_wheelodom)
+    rospy.Subscriber("/ak2/odom", Odometry, cb_ak2_wheelodom)
+    rospy.Subscriber("/ak1/odometry/filtered", Odometry, cb_ak1_ekfodom)
+    rospy.Subscriber("/ak2/odometry/filtered", Odometry, cb_ak2_ekfodom)
 
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
@@ -162,6 +206,68 @@ def listener():
         if 'ak2_diagnostics_battery' in log_control:
             rospy.loginfo('AK2 IMU battery=%f',
                 ak2_diagnostics_battery.data)
+
+        if 'ak1_jointstates' in log_control:
+            rospy.loginfo('AK1 joint_states p=(%f,%f,%f,%f) v=(%f,%f,%f,%f)',
+                ak1_jointstates.position[0],
+                ak1_jointstates.position[1],
+                ak1_jointstates.position[2],
+                ak1_jointstates.position[3],
+                ak1_jointstates.velocity[0],
+                ak1_jointstates.velocity[1],
+                ak1_jointstates.velocity[2],
+                ak1_jointstates.velocity[3])
+
+        if 'ak2_jointstates' in log_control:
+            rospy.loginfo('AK2 joint_states p=(%f,%f,%f,%f) v=(%f,%f,%f,%f)',
+                ak2_jointstates.position[0],
+                ak2_jointstates.position[1],
+                ak2_jointstates.position[2],
+                ak2_jointstates.position[3],
+                ak2_jointstates.velocity[0],
+                ak2_jointstates.velocity[1],
+                ak2_jointstates.velocity[2],
+                ak2_jointstates.velocity[3])
+
+        if 'ak1_wheelodom' in log_control:
+            rospy.loginfo('AK1 odom p=(%f,%f) qzw=(%f,%f) v=(%f,%f) wz=%f',
+                ak1_wheelodom.pose.pose.position.x,
+                ak1_wheelodom.pose.pose.position.y,
+                ak1_wheelodom.pose.pose.orientation.z,
+                ak1_wheelodom.pose.pose.orientation.w,
+                ak1_wheelodom.twist.twist.linear.x,
+                ak1_wheelodom.twist.twist.linear.y,
+                ak1_wheelodom.twist.twist.angular.z)
+
+        if 'ak2_wheelodom' in log_control:
+            rospy.loginfo('AK2 odom p=(%f,%f) qzw=(%f,%f) v=(%f,%f) wz=%f',
+                ak2_wheelodom.pose.pose.position.x,
+                ak2_wheelodom.pose.pose.position.y,
+                ak2_wheelodom.pose.pose.orientation.z,
+                ak2_wheelodom.pose.pose.orientation.w,
+                ak2_wheelodom.twist.twist.linear.x,
+                ak2_wheelodom.twist.twist.linear.y,
+                ak2_wheelodom.twist.twist.angular.z)
+
+        if 'ak1_ekfodom' in log_control:
+            rospy.loginfo('AK1 ekfodom p=(%f,%f) qzw=(%f,%f) v=(%f,%f) wz=%f',
+                ak1_ekfodom.pose.pose.position.x,
+                ak1_ekfodom.pose.pose.position.y,
+                ak1_ekfodom.pose.pose.orientation.z,
+                ak1_ekfodom.pose.pose.orientation.w,
+                ak1_ekfodom.twist.twist.linear.x,
+                ak1_ekfodom.twist.twist.linear.y,
+                ak1_ekfodom.twist.twist.angular.z)
+
+        if 'ak2_ekfodom' in log_control:
+            rospy.loginfo('AK2 ekfodom p=(%f,%f) qzw=(%f,%f) v=(%f,%f) wz=%f',
+                ak2_ekfodom.pose.pose.position.x,
+                ak2_ekfodom.pose.pose.position.y,
+                ak2_ekfodom.pose.pose.orientation.z,
+                ak2_ekfodom.pose.pose.orientation.w,
+                ak2_ekfodom.twist.twist.linear.x,
+                ak2_ekfodom.twist.twist.linear.y,
+                ak2_ekfodom.twist.twist.angular.z)
 
         rate.sleep()
 
