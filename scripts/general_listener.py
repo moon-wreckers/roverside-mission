@@ -17,9 +17,7 @@ from sensor_msgs.msg import Imu, JointState
 from geometry_msgs.msg import Vector3Stamped, Twist
 from nav_msgs.msg import Odometry
 
-log_control = ['ak1_jointstates', 'ak2_jointstates',
-               'ak1_wheelodom',   'ak2_wheelodom',
-               'ak1_ekfodom',     'ak2_ekfodom']
+log_control = ['ak1_ekfodom',     'ak2_ekfodom']
 
 ak1_imu_data = Imu()
 ak2_imu_data = Imu()
@@ -208,26 +206,16 @@ def listener():
                 ak2_diagnostics_battery.data)
 
         if 'ak1_jointstates' in log_control:
-            rospy.loginfo('AK1 joint_states p=(%f,%f,%f,%f) v=(%f,%f,%f,%f)',
-                ak1_jointstates.position[0],
-                ak1_jointstates.position[1],
-                ak1_jointstates.position[2],
-                ak1_jointstates.position[3],
-                ak1_jointstates.velocity[0],
-                ak1_jointstates.velocity[1],
-                ak1_jointstates.velocity[2],
-                ak1_jointstates.velocity[3])
+            logmsg = 'AK1 joint_states:\n'
+            for i in range(len(ak1_jointstates.name)):
+                logmsg += '- ' + ak1_jointstates.name[i] + ': p=' + str(ak1_jointstates.position[i]) + ' v=' + str(ak1_jointstates.velocity[i]) + '\n'
+            rospy.loginfo(logmsg)
 
         if 'ak2_jointstates' in log_control:
-            rospy.loginfo('AK2 joint_states p=(%f,%f,%f,%f) v=(%f,%f,%f,%f)',
-                ak2_jointstates.position[0],
-                ak2_jointstates.position[1],
-                ak2_jointstates.position[2],
-                ak2_jointstates.position[3],
-                ak2_jointstates.velocity[0],
-                ak2_jointstates.velocity[1],
-                ak2_jointstates.velocity[2],
-                ak2_jointstates.velocity[3])
+            logmsg = 'AK2 joint_states:\n'
+            for i in range(len(ak2_jointstates.name)):
+                logmsg += '- ' + ak2_jointstates.name[i] + ': p=' + str(ak2_jointstates.position[i]) + ' v=' + str(ak2_jointstates.velocity[i]) + '\n'
+            rospy.loginfo(logmsg)
 
         if 'ak1_wheelodom' in log_control:
             rospy.loginfo('AK1 odom p=(%f,%f) qzw=(%f,%f) v=(%f,%f) wz=%f',
