@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-drivebnf.py
+drive_backnforth.py
 A node that drives the rovers back and forth.
 """
 
@@ -17,7 +17,7 @@ from sensor_msgs.msg import Imu, JointState
 from geometry_msgs.msg import Vector3Stamped, Twist
 from nav_msgs.msg import Odometry
 
-drive_control = ['ak1'] # 'ak1', 'ak2'
+drive_control = ['ak2'] # 'ak1', 'ak2'
 drive_round = 8.0 # sec, back and forth as one round
 drive_velocity = 0.2 # ratio
 
