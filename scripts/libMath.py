@@ -81,9 +81,9 @@ def axisangle_to_quat(v, theta):
     Convert an axis-angle rotation representation to a quaternion rotation
     representation.
 
-    @param v The axis to rotate about.
+    @param v The axis vector as a tuple to rotate about.
     @param theta The angle to rotate by.
-    @return The quaternion representation of the rotation.
+    @return The quaternion representation of the rotation as a tuple.
     """
 
     v = normalize(v)
@@ -103,8 +103,8 @@ def quat_to_axisangle(q):
     Convert a quaternion rotation representation to an axis-angle rotation
     representation.
 
-    @param The quaternion representation of the rotation.
-    @return v The axis to rotate about.
+    @param q The quaternion representation of the rotation as a tuple.
+    @return v The axis vector as a tuple to rotate about.
     @return theta The angle to rotate by.
     """
 
@@ -113,17 +113,47 @@ def quat_to_axisangle(q):
     return normalize(v), theta
 
 
+def quat_to_euler(q):
+    """
+    Convert a quaternion rotation representation to an Euler angle rotation
+    representation.
+
+    @param q The quaternion representation of the rotation as a tuple.
+    @return The roll-pitch-yaw Euler angle representation of the rotation as a
+            tuple.
+    """
+
+    w, x, y, z = q
+
+    ysqr = y * y
+
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + ysqr)
+    X_rad = math.atan2(t0, t1)
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    Y_rad = math.asin(t2)
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (ysqr + z * z)
+    Z_rad = math.atan2(t3, t4)
+
+    return X_rad, Y_rad, Z_rad
+
+
 if __name__ == "__main__":
     # test quaternion operations
     x_axis_unit = (1, 0, 0)
     y_axis_unit = (0, 1, 0)
     z_axis_unit = (0, 0, 1)
 
-    r1 = axisangle_to_quat(x_axis_unit, 3.14 / 2)
+    r1 = axisangle_to_quat(x_axis_unit, numpy.pi / 2)
     (axis_r1, angle_r1) = quat_to_axisangle(r1)
     r1 = axisangle_to_quat(axis_r1, angle_r1)
-    r2 = axisangle_to_quat(y_axis_unit, 3.14 / 2)
-    r3 = axisangle_to_quat(z_axis_unit, 3.14 / 2)
+    r2 = axisangle_to_quat(y_axis_unit, numpy.pi / 2)
+    r3 = axisangle_to_quat(z_axis_unit, numpy.pi / 2)
 
     v = quat_rotate_vector(r1, y_axis_unit)
     v = quat_rotate_vector(r2, v)
