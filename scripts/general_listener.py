@@ -17,7 +17,16 @@ from sensor_msgs.msg import Imu, JointState
 from geometry_msgs.msg import Vector3Stamped, Twist
 from nav_msgs.msg import Odometry
 
-log_control = ['ak1_ekfodom',     'ak2_ekfodom']
+log_control = [
+    'ak1_towing_winch_status',
+    'ak2_towing_winch_status',
+    'ak1_towing_claw_status',
+    'ak2_towing_claw_status',
+    'ak1_towing_claw_actuator',
+    'ak2_towing_claw_actuator',
+    'ak1_towing_claw_pressure',
+    'ak2_towing_claw_pressure'
+]
 
 ak1_imu_data = Imu()
 ak2_imu_data = Imu()
@@ -35,6 +44,14 @@ ak1_wheelodom = Odometry()
 ak2_wheelodom = Odometry()
 ak1_ekfodom = Odometry()
 ak2_ekfodom = Odometry()
+ak1_towing_winch_status = String()
+ak2_towing_winch_status = String()
+ak1_towing_claw_status = String()
+ak2_towing_claw_status = String()
+ak1_towing_claw_actuator = UInt16()
+ak2_towing_claw_actuator = UInt16()
+ak1_towing_claw_pressure = UInt16()
+ak2_towing_claw_pressure = UInt16()
 
 
 def cb_ak1_imu_data(data):
@@ -117,25 +134,73 @@ def cb_ak2_ekfodom(data):
     ak2_ekfodom = data
 
 
+def cb_ak1_towing_winch_status(data):
+    global ak1_towing_winch_status
+    ak1_towing_winch_status = data
+
+
+def cb_ak2_towing_winch_status(data):
+    global ak2_towing_winch_status
+    ak2_towing_winch_status = data
+
+
+def cb_ak1_towing_claw_status(data):
+    global ak1_towing_claw_status
+    ak1_towing_claw_status = data
+
+
+def cb_ak2_towing_claw_status(data):
+    global ak2_towing_claw_status
+    ak2_towing_claw_status = data
+
+
+def cb_ak1_towing_claw_actuator(data):
+    global ak1_towing_claw_actuator
+    ak1_towing_claw_actuator = data
+
+
+def cb_ak2_towing_claw_actuator(data):
+    global ak2_towing_claw_actuator
+    ak2_towing_claw_actuator = data
+
+
+def cb_ak1_towing_claw_pressure(data):
+    global ak1_towing_claw_pressure
+    ak1_towing_claw_pressure = data
+
+
+def cb_ak2_towing_claw_pressure(data):
+    global ak2_towing_claw_pressure
+    ak2_towing_claw_pressure = data
+
+
 def listener():
     rospy.init_node('listener', anonymous=True)
 
-    rospy.Subscriber("/ak1/imu/data", Imu, cb_ak1_imu_data)
-    rospy.Subscriber("/ak2/imu/data", Imu, cb_ak2_imu_data)
-    rospy.Subscriber("/ak1/imu/rpy", Vector3Stamped, cb_ak1_imu_rpy)
-    rospy.Subscriber("/ak2/imu/rpy", Vector3Stamped, cb_ak2_imu_rpy)
-    rospy.Subscriber("/ak1/imu/mag", Vector3Stamped, cb_ak1_imu_mag)
-    rospy.Subscriber("/ak2/imu/mag", Vector3Stamped, cb_ak2_imu_mag)
-    rospy.Subscriber("/ak1/imu/temperature", Float32, cb_ak1_imu_temperature)
-    rospy.Subscriber("/ak2/imu/temperature", Float32, cb_ak2_imu_temperature)
-    rospy.Subscriber("/ak1/diagnostics/battery_voltage", Float32, cb_ak1_diagnostics_battery)
-    rospy.Subscriber("/ak2/diagnostics/battery_voltage", Float32, cb_ak2_diagnostics_battery)
-    rospy.Subscriber("/ak1/joint_states", JointState, cb_ak1_jointstates)
-    rospy.Subscriber("/ak2/joint_states", JointState, cb_ak2_jointstates)
-    rospy.Subscriber("/ak1/odom", Odometry, cb_ak1_wheelodom)
-    rospy.Subscriber("/ak2/odom", Odometry, cb_ak2_wheelodom)
-    rospy.Subscriber("/ak1/odometry/filtered", Odometry, cb_ak1_ekfodom)
-    rospy.Subscriber("/ak2/odometry/filtered", Odometry, cb_ak2_ekfodom)
+    rospy.Subscriber('/ak1/imu/data', Imu, cb_ak1_imu_data)
+    rospy.Subscriber('/ak2/imu/data', Imu, cb_ak2_imu_data)
+    rospy.Subscriber('/ak1/imu/rpy', Vector3Stamped, cb_ak1_imu_rpy)
+    rospy.Subscriber('/ak2/imu/rpy', Vector3Stamped, cb_ak2_imu_rpy)
+    rospy.Subscriber('/ak1/imu/mag', Vector3Stamped, cb_ak1_imu_mag)
+    rospy.Subscriber('/ak2/imu/mag', Vector3Stamped, cb_ak2_imu_mag)
+    rospy.Subscriber('/ak1/imu/temperature', Float32, cb_ak1_imu_temperature)
+    rospy.Subscriber('/ak2/imu/temperature', Float32, cb_ak2_imu_temperature)
+    rospy.Subscriber('/ak1/diagnostics/battery_voltage', Float32, cb_ak1_diagnostics_battery)
+    rospy.Subscriber('/ak2/diagnostics/battery_voltage', Float32, cb_ak2_diagnostics_battery)
+    rospy.Subscriber('/ak1/joint_states', JointState, cb_ak1_jointstates)
+    rospy.Subscriber('/ak2/joint_states', JointState, cb_ak2_jointstates)
+    rospy.Subscriber('/ak1/odom', Odometry, cb_ak1_wheelodom)
+    rospy.Subscriber('/ak2/odom', Odometry, cb_ak2_wheelodom)
+    rospy.Subscriber('/ak1/odometry/filtered', Odometry, cb_ak1_ekfodom)
+    rospy.Subscriber('/ak2/odometry/filtered', Odometry, cb_ak2_ekfodom)
+    rospy.Subscriber('/ak1/towing/winch/status', String, cb_ak1_towing_winch_status)
+    rospy.Subscriber('/ak2/towing/winch/status', String, cb_ak2_towing_winch_status)
+    rospy.Subscriber('/ak1/towing/claw/status', String, cb_ak1_towing_claw_status)
+    rospy.Subscriber('/ak2/towing/claw/status', String, cb_ak2_towing_claw_status)
+    rospy.Subscriber('/ak1/towing/claw/actuator', String, cb_ak1_towing_claw_actuator)
+    rospy.Subscriber('/ak2/towing/claw/actuator', String, cb_ak2_towing_claw_actuator)
+    rospy.Subscriber('/ak1/towing/claw/pressure', String, cb_ak1_towing_claw_pressure)
+    rospy.Subscriber('/ak2/towing/claw/pressure', String, cb_ak2_towing_claw_pressure)
 
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
@@ -256,6 +321,31 @@ def listener():
                 ak2_ekfodom.twist.twist.linear.x,
                 ak2_ekfodom.twist.twist.linear.y,
                 ak2_ekfodom.twist.twist.angular.z)
+
+        if 'ak1_towing_winch_status' in log_control:
+            rospy.loginfo('AK1 towing_winch_status="%s"', ak1_towing_winch_status.data)
+
+        if 'ak2_towing_winch_status' in log_control:
+            rospy.loginfo('AK2 towing_winch_status="%s"', ak2_towing_winch_status.data)
+
+        if 'ak1_towing_claw_status' in log_control:
+            rospy.loginfo('AK1 towing_claw_status="%s"', ak1_towing_claw_status.data)
+
+        if 'ak2_towing_claw_status' in log_control:
+            rospy.loginfo('AK2 towing_claw_status="%s"', ak2_towing_claw_status.data)
+
+        if 'ak1_towing_claw_actuator' in log_control:
+            rospy.loginfo('AK1 towing_claw_actuator=%f', ak1_towing_claw_actuator.data)
+
+        if 'ak2_towing_claw_actuator' in log_control:
+            rospy.loginfo('AK2 towing_claw_actuator=%f', ak2_towing_claw_actuator.data)
+
+        if 'ak1_towing_claw_pressure' in log_control:
+            rospy.loginfo('AK1 towing_claw_pressure=%f', ak1_towing_claw_pressure.data)
+
+        if 'ak2_towing_claw_pressure' in log_control:
+            rospy.loginfo('AK2 towing_claw_pressure=%f', ak2_towing_claw_pressure.data)
+
 
         rate.sleep()
 
