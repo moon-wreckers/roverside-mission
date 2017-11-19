@@ -13,9 +13,9 @@ __copyright__   = "Copyright (C) 2017, the Moon Wreckers. All rights reserved."
 
 import rospy
 from std_msgs.msg import String, Float32, UInt16
-from sensor_msgs.msg import Imu, JointState
-from geometry_msgs.msg import Vector3Stamped
-from nav_msgs.msg import Odometry, Twist
+from sensor_msgs.msg import Imu, JointState, Joy
+from geometry_msgs.msg import Vector3Stamped, Twist
+from nav_msgs.msg import Odometry
 
 
 def mynode():
