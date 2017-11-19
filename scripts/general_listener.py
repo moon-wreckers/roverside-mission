@@ -13,7 +13,7 @@ __copyright__   = "Copyright (C) 2017, the Moon Wreckers. All rights reserved."
 
 import rospy
 from std_msgs.msg import String, Float32, UInt16
-from sensor_msgs.msg import Imu, JointState
+from sensor_msgs.msg import Imu, JointState, Joy
 from geometry_msgs.msg import Vector3Stamped, Twist
 from nav_msgs.msg import Odometry
 
@@ -25,7 +25,9 @@ log_control = [
     'ak1_towing_claw_actuator',
     'ak2_towing_claw_actuator',
     'ak1_towing_claw_pressure',
-    'ak2_towing_claw_pressure'
+    'ak2_towing_claw_pressure',
+    'ak1_joy',
+    'ak2_joy'
 ]
 
 ak1_imu_data = Imu()
@@ -52,6 +54,8 @@ ak1_towing_claw_actuator = UInt16()
 ak2_towing_claw_actuator = UInt16()
 ak1_towing_claw_pressure = UInt16()
 ak2_towing_claw_pressure = UInt16()
+ak1_joy = Joy()
+ak2_joy = Joy()
 
 
 def cb_ak1_imu_data(data):
@@ -174,6 +178,16 @@ def cb_ak2_towing_claw_pressure(data):
     ak2_towing_claw_pressure = data
 
 
+def cb_ak1_joy(data):
+    global ak1_joy
+    ak1_joy = data
+
+
+def cb_ak2_joy(data):
+    global ak2_joy
+    ak2_joy = data
+
+
 def listener():
     rospy.init_node('listener', anonymous=True)
 
@@ -201,6 +215,8 @@ def listener():
     rospy.Subscriber('/ak2/towing/claw/actuator', String, cb_ak2_towing_claw_actuator)
     rospy.Subscriber('/ak1/towing/claw/pressure', String, cb_ak1_towing_claw_pressure)
     rospy.Subscriber('/ak2/towing/claw/pressure', String, cb_ak2_towing_claw_pressure)
+    rospy.Subscriber('/ak1/joy', Joy, cb_ak1_joy)
+    rospy.Subscriber('/ak2/joy', Joy, cb_ak2_joy)
 
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
@@ -345,6 +361,36 @@ def listener():
 
         if 'ak2_towing_claw_pressure' in log_control:
             rospy.loginfo('AK2 towing_claw_pressure=%f', ak2_towing_claw_pressure.data)
+
+        if 'ak1_joy' in log_control:
+            logmsg = 'AK1 joy axes = '
+            logmsg += '['
+            for i_axis in range(len(ak1_joy.axes)):
+                logmsg += str(ak1_joy.axes[i_axis]) + ','
+            logmsg += ']'
+            rospy.loginfo(logmsg)
+
+            logmsg = 'AK1 joy buttons = '
+            logmsg += '['
+            for i_button in range(len(ak1_joy.buttons)):
+                logmsg += str(ak1_joy.buttons[i_button]) + ','
+            logmsg += ']'
+            rospy.loginfo(logmsg)
+
+        if 'ak2_joy' in log_control:
+            logmsg = 'AK2 joy axes = '
+            logmsg += '['
+            for i_axis in range(len(ak2_joy.axes)):
+                logmsg += str(ak2_joy.axes[i_axis]) + ','
+            logmsg += ']'
+            rospy.loginfo(logmsg)
+
+            logmsg = 'AK2 joy buttons = '
+            logmsg += '['
+            for i_button in range(len(ak2_joy.buttons)):
+                logmsg += str(ak2_joy.buttons[i_button]) + ','
+            logmsg += ']'
+            rospy.loginfo(logmsg)
 
 
         rate.sleep()
