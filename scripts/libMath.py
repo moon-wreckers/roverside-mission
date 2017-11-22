@@ -31,6 +31,24 @@ def normalize(v, tolerance=0.00001):
     return v
 
 
+def vec_project(v_from, v_onto):
+    """
+    Map a vector onto the direction of another vector.
+
+    @param v_from The origianl vector as a tuple.
+    @param v_onto The vector as a tuple onto whose direction the original vector
+                  should be mapped.
+    @return The mapped vector as a tuple.
+    """
+
+    v = numpy.array(v_from)
+    vref = numpy.array(v_onto)
+
+    vres = (numpy.dot(v, vref) * vref) / (numpy.linalg.norm(vref) * numpy.linalg.norm(vref))
+
+    return tuple(n for n in vres)
+
+
 def quat_multiply(q1, q2):
     """
     Multiple two quaternions.
@@ -160,3 +178,11 @@ if __name__ == "__main__":
     v = quat_rotate_vector(r3, v)
 
     print(v)
+
+    # test vector projection
+    v0 = (2,2,2)
+    vref = (0,5,0)
+
+    vproj = vec_project(v0, vref)
+
+    print(vproj)
